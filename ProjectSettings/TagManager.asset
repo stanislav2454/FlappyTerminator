@@ -7,6 +7,9 @@ TagManager:
   - Enemy
   - Bullet
   - ObjectRemover
+  - Ground
+  - Boundary
+  - Ceiling
   layers:
   - Default
   - TransparentFX
