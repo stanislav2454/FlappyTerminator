@@ -11,10 +11,16 @@ public class GameUI : MonoBehaviour
 
     private void Awake()
     {
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
 
         if (_eventBus == null)
             Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
+    }
+
+    private void Start()
+    {
+        InitializeUI();
+        //Time.timeScale = 0f;
     }
 
     private void OnEnable()
@@ -45,12 +51,11 @@ public class GameUI : MonoBehaviour
         _endGameScreen.RestartButtonClicked -= OnRestartButtonClick;
     }
 
-    private void Start()
+    private void InitializeUI()
     {
         _startScreen.Open();
         _hud.SetActive(false);
         _endGameScreen.Close();
-        Time.timeScale = 0f;
     }
 
     private void OnScoreChanged(int score) =>
@@ -60,23 +65,23 @@ public class GameUI : MonoBehaviour
     {
         _endGameScreen.Open();
         _hud.SetActive(false);
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
     }
 
     private void OnGameStarted()
     {
         _startScreen.Close();
         _hud.SetActive(true);
-        Time.timeScale = 1f;
-        _eventBus?.PublishScoreChanged(0);
+        //Time.timeScale = 1f;
+        //_eventBus?.PublishScoreChanged(0);
     }
 
     private void OnGameRestarted()
     {
         _endGameScreen.Close();
         _hud.SetActive(true);
-        Time.timeScale = 1f;
-        _eventBus?.PublishScoreChanged(0);
+        //Time.timeScale = 1f;
+        //_eventBus?.PublishScoreChanged(0);
     }
 
     private void OnPlayButtonClick() =>

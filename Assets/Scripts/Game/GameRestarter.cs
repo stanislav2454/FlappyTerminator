@@ -26,19 +26,45 @@ public class GameRestarter : MonoBehaviour
 
     private void OnDisable()
     {
-        if (_eventBus != null)
-            _eventBus.GameRestarted -= OnGameRestarted;
+        _eventBus.GameRestarted -= OnGameRestarted; // ✅ ОТПИСКА активна
+        Debug.Log("[GameRestarter] Unsubscribed from GameRestarted event");
     }
 
     private void OnGameRestarted()
     {
+        Debug.Log("[GameRestarter] Starting game restart...");
+
+        // 1. Очистить врагов
         _enemyGenerator?.ResetGenerator();
 
+        // 2. Очистить пули
         var bullets = FindObjectsOfType<Bullet>();
         foreach (var bullet in bullets)
+        {
             if (bullet != null)
                 Destroy(bullet.gameObject);
+        }
 
-        _playerController?.ResetPlayer();
+        // 3. Сбросить игрока (ВАЖНО!)
+        if (_playerController != null)
+        {
+            Debug.Log("[GameRestarter] Resetting player controller");
+            _playerController.ResetPlayer();
+        }
+        //else
+        //{
+        //    Debug.LogError("[GameRestarter] PlayerController reference is null!");
+        //}   
+        // 4. ✅ ПРИНУДИТЕЛЬНО ВКЛЮЧИТЬ ВВОД
+        var inputHandler = FindObjectOfType<InputHandler>();
+        if (inputHandler != null)
+        {
+            Debug.Log("[GameRestarter] Force enabling input via reflection");
+            // Через рефлексию принудительно вызываем OnGameRestarted
+            var method = typeof(InputHandler).GetMethod("OnGameRestarted",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method?.Invoke(inputHandler, null);
+        }
+        Debug.Log("[GameRestarter] Game restart completed");
     }
 }

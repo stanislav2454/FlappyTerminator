@@ -1,14 +1,20 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private const float TimeScaleReal = 1f;
-    private const float RealTimePause = 0f;
+    //private const float TimeScaleReal = 1f;
+    //private const float RealTimePause = 0f;
 
     [SerializeField] private GameState _currentState = GameState.Menu;
     [SerializeField] private EventBus _eventBus;
 
     public GameState CurrentState => _currentState;
+
+    private void Awake()
+    {
+        if (_eventBus == null)
+            Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
+    }
 
     private void OnEnable()
     {
@@ -20,7 +26,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         if (_eventBus != null)
         {
@@ -33,18 +39,18 @@ public class GameManager : MonoBehaviour
     private void OnGameStarted()
     {
         _currentState = GameState.Playing;
-        Time.timeScale = TimeScaleReal;
+        //Time.timeScale = TimeScaleReal;
     }
 
     private void OnGameRestarted()
     {
         _currentState = GameState.Playing;
-        Time.timeScale = TimeScaleReal;
+        //Time.timeScale = TimeScaleReal;
     }
 
     private void OnPlayerDied()
     {
         _currentState = GameState.GameOver;
-        Time.timeScale = RealTimePause;
+        //Time.timeScale = RealTimePause;
     }
 }

@@ -9,13 +9,15 @@ public class CollisionHandler : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        foreach (var tag in _obstacleTags)
-        {
-            if (other.CompareTag(tag))
-            {
-                ObstacleHit?.Invoke();
-                return;
-            }
-        }
+        if (Array.Exists(_obstacleTags, tag => other.CompareTag(tag)))
+            ObstacleHit?.Invoke();
+        //foreach (var tag in _obstacleTags)
+        //{
+        //    if (other.CompareTag(tag))
+        //    {
+        //        ObstacleHit?.Invoke();
+        //        return;
+        //    }
+        //}
     }
 }

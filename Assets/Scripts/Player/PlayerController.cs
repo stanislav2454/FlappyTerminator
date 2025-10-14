@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     private InputHandler _inputHandler;
     private CollisionHandler _collisionHandler;
 
-    public event Action GameOver;
+    //public event Action GameOver;
 
     private void Awake()
     {
@@ -50,9 +50,13 @@ public class PlayerController : MonoBehaviour
 
     public void ResetPlayer()
     {
-        _mover.Reset();
-        _health.ResetHealth();
-        gameObject.SetActive(true);
+        Debug.Log("[PlayerController] Resetting player...");
+
+        _mover?.Reset();
+        _health?.ResetHealth();
+        gameObject.SetActive(true); // ⚠️ ВАЖНО: объект должен быть активен!
+
+        Debug.Log($"[PlayerController] Player active: {gameObject.activeInHierarchy}");
     }
 
     private void OnJumpPressed() =>

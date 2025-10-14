@@ -13,14 +13,17 @@ public class EnemyGenerator : MonoBehaviour
 
     private void Awake()
     {
+        if (_enemyPool == null)
+            Debug.LogError("Компонент \"EnemyPool\" не установлен в инспекторе!");
+
         if (_eventBus == null)
             Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
     }
 
-    private void Start()
-    { 
-        _canSpawn = false;
-    }
+    //private void Start()
+    //{ 
+    //    _canSpawn = false;
+    //}
 
     private void OnEnable()
     {
@@ -67,7 +70,8 @@ public class EnemyGenerator : MonoBehaviour
     {
         var wait = new WaitForSeconds(_spawnDelay);
 
-        while (enabled)
+        while (_canSpawn)
+        //while (enabled)
         {
             SpawnEnemy();
 
