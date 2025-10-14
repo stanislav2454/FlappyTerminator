@@ -3,11 +3,14 @@
 [RequireComponent(typeof(Health))]
 public class Enemy : MonoBehaviour, IInteractable, IDamageable
 {
+    private const float DefaultTimeValue = 0f;
+
     [SerializeField] private int _scoreValue = 1;
     [SerializeField] private float _shootDelay = 2f;
-    [SerializeField] private Bullet _bulletPrefab;
     [SerializeField] private float _movementAmplitude = 1f;
     [SerializeField] private float _movementFrequency = 1f;
+    [SerializeField] private Bullet _bulletPrefab;
+    [SerializeField] private BulletPool _bulletPool;
 
     private EventBus _eventBus;
     private Vector3 _startPosition;
@@ -20,13 +23,19 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
     private void Awake()
     {
         _health = GetComponent<Health>();
+
+        if (_bulletPrefab == null)
+            Debug.LogError("Компонент \"Bullet Prefab\" не установлен в инспекторе!");
+
+        if (_bulletPool == null)
+            Debug.LogWarning("Компонент \"BulletPool\" не установлен в инспекторе!");
     }
 
     private void OnEnable()
     {
         _isActive = true;
         _startPosition = transform.position;
-        _time = 0f;
+        _time = DefaultTimeValue;
 
         if (_health != null)
         {
@@ -40,6 +49,7 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
     private void OnDisable()
     {
         _isActive = false;
+
         if (_health != null)
             _health.Died -= OnDied;
     }
@@ -57,6 +67,9 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
     public void SetEventBus(EventBus eventBus) =>
         _eventBus = eventBus;
 
+    public void SetBulletPool(BulletPool bulletPool) =>
+        _bulletPool = bulletPool;
+
     public void TakeDamage(int damage) =>
         _health?.TakeDamage(damage);
 
@@ -72,11 +85,21 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
 
     private void Shoot()
     {
-        if (_bulletPrefab == null) 
+        if (_bulletPrefab == null)
             return;
 
-        var bullet = Instantiate(_bulletPrefab, transform.position, Quaternion.identity);
-        bullet.Initialize(Vector2.left, BulletOwner.Enemy);
+        Vector2 shootDirection = Vector2.left;
+        Vector3 spawnPosition = transform.position;
+
+        if (_bulletPool != null)
+        {
+            var bullet = _bulletPool.GetBullet(spawnPosition, shootDirection, BulletOwner.Enemy);
+        }
+        else
+        {
+            var bullet = Instantiate(_bulletPrefab, spawnPosition, Quaternion.identity);
+            bullet.Initialize(shootDirection, BulletOwner.Enemy);
+        }
     }
 
     private void OnDied()

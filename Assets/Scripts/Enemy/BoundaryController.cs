@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
-
+/// <summary>
+/// Класс обрабатывает столкновение границы экрана с врагами.
+/// </summary>
 public class BoundaryController : MonoBehaviour
 {
     [SerializeField] private EnemyPool _enemyPool;

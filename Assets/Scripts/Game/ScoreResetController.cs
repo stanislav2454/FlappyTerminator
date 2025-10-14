@@ -28,12 +28,12 @@ public class ScoreResetController : MonoBehaviour
         }
     }
 
-    private void OnGameStarted() => ResetScore();
-    private void OnGameRestarted() => ResetScore();
+    private void OnGameStarted() =>
+        ResetScore();
 
-    private void ResetScore()
-    {
+    private void OnGameRestarted() =>
+        ResetScore();
+
+    private void ResetScore() =>
         _eventBus?.PublishScoreChanged(0);
-        Debug.Log("[ScoreResetController] Score reset to 0");
-    }
 }

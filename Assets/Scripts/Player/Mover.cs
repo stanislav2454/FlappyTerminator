@@ -25,15 +25,15 @@ public class Mover : MonoBehaviour
         Reset();
     }
 
+    private void Update()
+    {
+        transform.rotation = Quaternion.Lerp(transform.rotation, _minRotation, _rotationSpeed * Time.deltaTime);
+    }
+
     public void Jump()
     {
         _rigidbody2D.velocity = new Vector2(_speed, _tapForce);
         transform.rotation = _maxRotation;
-    }
-
-    private void Update()
-    {
-        transform.rotation = Quaternion.Lerp(transform.rotation, _minRotation, _rotationSpeed * Time.deltaTime);
     }
 
     public void Reset()

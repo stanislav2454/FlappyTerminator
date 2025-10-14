@@ -2,9 +2,6 @@
 
 public class GameManager : MonoBehaviour
 {
-    //private const float TimeScaleReal = 1f;
-    //private const float RealTimePause = 0f;
-
     [SerializeField] private GameState _currentState = GameState.Menu;
     [SerializeField] private EventBus _eventBus;
 
@@ -36,21 +33,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnGameStarted()
-    {
+    private void OnGameStarted() =>
         _currentState = GameState.Playing;
-        //Time.timeScale = TimeScaleReal;
-    }
 
-    private void OnGameRestarted()
-    {
+    private void OnGameRestarted() =>
         _currentState = GameState.Playing;
-        //Time.timeScale = TimeScaleReal;
-    }
 
-    private void OnPlayerDied()
-    {
+    private void OnPlayerDied() =>
         _currentState = GameState.GameOver;
-        //Time.timeScale = RealTimePause;
-    }
 }

@@ -11,7 +11,17 @@ public class GameUI : MonoBehaviour
 
     private void Awake()
     {
-        //Time.timeScale = 0f;
+        if (_startScreen == null)
+            Debug.LogError("Компонент \"StartScreen\" не установлен в инспекторе!");
+
+        if (_endGameScreen == null)
+            Debug.LogError("Компонент \"EndGameScreen\" не установлен в инспекторе!");
+
+        if (_scoreText == null)
+            Debug.LogError("Компонент \"TMP_Text\" не установлен в инспекторе!");
+
+        if (_hud == null)
+            Debug.LogError("Компонент \"HUD (Heads-Up Display(интерфейс отображения информации на экране))\" не установлен в инспекторе!");
 
         if (_eventBus == null)
             Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
@@ -20,7 +30,6 @@ public class GameUI : MonoBehaviour
     private void Start()
     {
         InitializeUI();
-        //Time.timeScale = 0f;
     }
 
     private void OnEnable()
@@ -65,23 +74,18 @@ public class GameUI : MonoBehaviour
     {
         _endGameScreen.Open();
         _hud.SetActive(false);
-        //Time.timeScale = 0f;
     }
 
     private void OnGameStarted()
     {
         _startScreen.Close();
         _hud.SetActive(true);
-        //Time.timeScale = 1f;
-        //_eventBus?.PublishScoreChanged(0);
     }
 
     private void OnGameRestarted()
     {
         _endGameScreen.Close();
         _hud.SetActive(true);
-        //Time.timeScale = 1f;
-        //_eventBus?.PublishScoreChanged(0);
     }
 
     private void OnPlayButtonClick() =>

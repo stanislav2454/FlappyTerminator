@@ -20,11 +20,6 @@ public class EnemyGenerator : MonoBehaviour
             Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
     }
 
-    //private void Start()
-    //{ 
-    //    _canSpawn = false;
-    //}
-
     private void OnEnable()
     {
         if (_eventBus != null)
@@ -71,10 +66,8 @@ public class EnemyGenerator : MonoBehaviour
         var wait = new WaitForSeconds(_spawnDelay);
 
         while (_canSpawn)
-        //while (enabled)
         {
             SpawnEnemy();
-
             yield return wait;
         }
     }

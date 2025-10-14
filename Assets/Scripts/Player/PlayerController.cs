@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Mover))]
 [RequireComponent(typeof(PlayerShooter))]
@@ -12,24 +11,22 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private EventBus _eventBus;
 
-    private PlayerShooter _shooter;
     private Mover _mover;
+    private PlayerShooter _shooter;
     private Health _health;
     private InputHandler _inputHandler;
     private CollisionHandler _collisionHandler;
 
-    //public event Action GameOver;
-
     private void Awake()
     {
+        if (_eventBus == null)
+            Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
+
         _mover = GetComponent<Mover>();
         _shooter = GetComponent<PlayerShooter>();
         _health = GetComponent<Health>();
         _inputHandler = GetComponent<InputHandler>();
         _collisionHandler = GetComponent<CollisionHandler>();
-
-        if (_eventBus == null)
-            Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
     }
 
     private void OnEnable()
@@ -50,13 +47,9 @@ public class PlayerController : MonoBehaviour
 
     public void ResetPlayer()
     {
-        Debug.Log("[PlayerController] Resetting player...");
-
         _mover?.Reset();
         _health?.ResetHealth();
-        gameObject.SetActive(true); // ⚠️ ВАЖНО: объект должен быть активен!
-
-        Debug.Log($"[PlayerController] Player active: {gameObject.activeInHierarchy}");
+        gameObject.SetActive(true);
     }
 
     private void OnJumpPressed() =>

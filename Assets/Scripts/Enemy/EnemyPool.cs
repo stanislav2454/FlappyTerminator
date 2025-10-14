@@ -1,12 +1,13 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 public class EnemyPool : MonoBehaviour
 {
+    [SerializeField] private int _numberEnemiesPool = 10;
     [SerializeField] private Enemy _enemyPrefab;
-    [SerializeField] private int _poolSize = 10;
     [SerializeField] private Transform _container;
     [SerializeField] private EventBus _eventBus;
+    [SerializeField] private BulletPool _bulletPool;
 
     private Queue<Enemy> _pool = new Queue<Enemy>();
     private List<Enemy> _activeEnemies = new List<Enemy>();
@@ -50,7 +51,7 @@ public class EnemyPool : MonoBehaviour
 
     private void InitializePool()
     {
-        for (int i = 0; i < _poolSize; i++)
+        for (int i = 0; i < _numberEnemiesPool; i++)
         {
             var enemy = CreateNewEnemy();
             _pool.Enqueue(enemy);
@@ -61,6 +62,7 @@ public class EnemyPool : MonoBehaviour
     {
         var enemy = Instantiate(_enemyPrefab, _container);
         enemy.SetEventBus(_eventBus);
+        enemy.SetBulletPool(_bulletPool);
         enemy.EnemyDisabled += ReturnEnemy;
         enemy.gameObject.SetActive(false);
         return enemy;

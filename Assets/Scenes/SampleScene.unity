@@ -214,6 +214,8 @@ MonoBehaviour:
   _enemyGenerator: {fileID: 2090007777}
   _playerController: {fileID: 1216162870}
   _eventBus: {fileID: 1310921903}
+  _bulletPool: {fileID: 1678165558}
+  _inputHandler: {fileID: 1216162874}
 --- !u!1 &384389502
 GameObject:
   m_ObjectHideFlags: 0
@@ -292,6 +294,7 @@ GameObject:
   m_Component:
   - component: {fileID: 449869913}
   - component: {fileID: 449869914}
+  - component: {fileID: 449869915}
   m_Layer: 0
   m_Name: Ceiling
   m_TagString: Ceiling
@@ -359,6 +362,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 20, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &449869915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 449869912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e03df4a12a090ad4da3b072e5549567a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &499193615
 GameObject:
   m_ObjectHideFlags: 0
@@ -945,8 +960,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bulletPrefab: {fileID: 6032552734835986631, guid: e5014904a833a6046932028d176844a1, type: 3}
   _bulletShootPoint: {fileID: 1430969826}
-  _cooldown: 0.5
   _eventBus: {fileID: 1310921903}
+  _bulletPool: {fileID: 1678165558}
+  _cooldown: 0.5
 --- !u!114 &1216162878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -959,10 +975,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2b587e0e8c9c8948b60e3b00b9d83b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _obstacleTags:
-  - Ground
-  - Ceiling
-  - Boundary
 --- !u!114 &1216162879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1451,6 +1463,7 @@ GameObject:
   - component: {fileID: 1551381720}
   - component: {fileID: 1551381722}
   - component: {fileID: 1551381723}
+  - component: {fileID: 1551381724}
   m_Layer: 0
   m_Name: Boundary
   m_TagString: Boundary
@@ -1531,6 +1544,65 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyPool: {fileID: 1879254871}
+--- !u!114 &1551381724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551381719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5ce8ab61e77a4e4280bc139a7d136d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1678165557
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1678165559}
+  - component: {fileID: 1678165558}
+  m_Layer: 0
+  m_Name: BulletPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1678165558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1678165557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45f2b7f42f792ad48ad9e1e80d116658, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _bulletPrefab: {fileID: 6032552734835986631, guid: e5014904a833a6046932028d176844a1, type: 3}
+  _poolSize: 20
+  _container: {fileID: 1678165559}
+--- !u!4 &1678165559
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1678165557}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1823064900
 GameObject:
   m_ObjectHideFlags: 0
@@ -1541,6 +1613,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1823064901}
   - component: {fileID: 1823064902}
+  - component: {fileID: 1823064903}
   m_Layer: 0
   m_Name: Ground
   m_TagString: Ground
@@ -1608,6 +1681,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 20, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1823064903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823064900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db8e35aadd1bdd24e91c5110482cbd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1825567877
 GameObject:
   m_ObjectHideFlags: 0
@@ -1850,10 +1935,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fb457ed973ab164e8f75a6b35bea385, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _numberEnemiesPool: 10
   _enemyPrefab: {fileID: 222533466859111368, guid: fa511c1790f0d1c46b9dff29b4380463, type: 3}
-  _poolSize: 10
   _container: {fileID: 0}
   _eventBus: {fileID: 1310921903}
+  _bulletPool: {fileID: 0}
 --- !u!1 &1940451575
 GameObject:
   m_ObjectHideFlags: 0
@@ -2322,4 +2408,5 @@ SceneRoots:
   - {fileID: 499193619}
   - {fileID: 519420032}
   - {fileID: 1216162864}
+  - {fileID: 1678165559}
   - {fileID: 1960331290}

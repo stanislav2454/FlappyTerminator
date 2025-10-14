@@ -2,6 +2,8 @@
 
 public class ScoreManager : MonoBehaviour
 {
+    private const int DefaultScoreValue = 0;
+
     [SerializeField] private EventBus _eventBus;
 
     private int _currentScore;
@@ -42,13 +44,13 @@ public class ScoreManager : MonoBehaviour
 
     private void OnGameRestarted()
     {
-        _currentScore = 0;
+        _currentScore = DefaultScoreValue;
         _eventBus?.PublishScoreChanged(_currentScore);
     }
 
     private void OnGameStarted()
     {
-        _currentScore = 0;
+        _currentScore = DefaultScoreValue;
         _eventBus?.PublishScoreChanged(_currentScore);
     }
 }
