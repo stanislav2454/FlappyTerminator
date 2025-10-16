@@ -10,18 +10,16 @@ public abstract class GenericPool<T> : MonoBehaviour where T : MonoBehaviour
     protected Queue<T> _pool = new Queue<T>();
     protected List<T> _activeObjects = new List<T>();
 
-    // ✅ ДОБАВИТЬ ЭТИ МЕТОДЫ ЕСЛИ ИХ НЕТ:
-    public int GetActiveObjectsCount() => 
-        _activeObjects.Count;
-    public int GetPooledObjectsCount() => 
-        _pool.Count;
-    public int GetTotalCreatedCount() => 
-        GetActiveObjectsCount() + GetPooledObjectsCount();
-
     protected virtual void Awake()
     {
         InitializePool();
     }
+
+    public int GetActiveObjectsCount() =>
+        _activeObjects.Count;
+
+    public int GetPooledObjectsCount() =>
+        _pool.Count;
 
     public virtual T GetObject(Vector3 position)
     {

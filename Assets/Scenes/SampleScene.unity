@@ -211,7 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b819ecf5dd63948bcf9a4f03cc61c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyGenerator: {fileID: 2090007777}
+  _enemySpawner: {fileID: 2090007777}
   _playerController: {fileID: 1216162870}
   _gameManager: {fileID: 1960331291}
   _bulletPool: {fileID: 1678165558}
@@ -1499,7 +1499,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 6032552734835986631, guid: e5014904a833a6046932028d176844a1, type: 3}
-  _poolSize: 20
+  _poolSize: 15
   _container: {fileID: 1678165559}
 --- !u!4 &1678165559
 Transform:
@@ -1899,7 +1899,6 @@ GameObject:
   - component: {fileID: 1960331290}
   - component: {fileID: 1960331293}
   - component: {fileID: 1960331291}
-  - component: {fileID: 1960331294}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -1944,8 +1943,6 @@ MonoBehaviour:
   _gameRestarter: {fileID: 263941219}
   _scoreManager: {fileID: 93146671}
   _currentState: 0
-  _bulletPool: {fileID: 1678165558}
-  _enemyPool: {fileID: 1879254871}
 --- !u!114 &1960331293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1959,18 +1956,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameManager: {fileID: 1960331291}
---- !u!114 &1960331294
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1960331289}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a2f82b0ee055e2449d2996b499c8a7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2090007775
 GameObject:
   m_ObjectHideFlags: 0
@@ -1982,7 +1967,7 @@ GameObject:
   - component: {fileID: 2090007776}
   - component: {fileID: 2090007777}
   m_Layer: 0
-  m_Name: 'EnemyGenerator '
+  m_Name: EnemySpawner
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2012,7 +1997,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2090007775}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06825b3e4ae52af40bdf4329a8845122, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e2fd607fce58344aaef12edc97ef376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnDelay: 3

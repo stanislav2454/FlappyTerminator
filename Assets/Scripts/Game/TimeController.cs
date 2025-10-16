@@ -44,7 +44,6 @@ public class TimeController : MonoBehaviour
     public void SetPausedTime() =>
         Time.timeScale = RealTimePause;
 
-
     private void OnGameStarted() =>
         SetNormalTime();
 

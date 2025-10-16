@@ -10,8 +10,6 @@ public class StartScreen : Window
     public override void Open() =>
         SetWindowState(MaxAlpha, true, true);
 
-    protected override void OnButtonClick()
-    {
+    protected override void OnButtonClick() =>
         PlayButtonClicked?.Invoke();
-    }
 }

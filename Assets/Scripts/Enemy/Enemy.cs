@@ -60,7 +60,6 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
             _shootingCoroutine = null;
         }
 
-        //StopAllCoroutines();//!!!!!!!!!!!!!!
         _weapon?.StopShooting();
     }
 
@@ -70,16 +69,10 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
             return;
 
         _time += Time.deltaTime;
-        // ✅ ОПТИМИЗИРОВАННОЕ ДВИЖЕНИЕ - меньше аллокаций
+
         var position = transform.position;
         position.y = _startPosition.y + Mathf.Sin(_time * _movementFrequency) * _movementAmplitude;
         transform.position = position;
-
-        //float newY = _startPosition.y + Mathf.Sin(_time * _movementFrequency) * _movementAmplitude;
-
-        //var position = transform.position;
-        //position.y = newY;
-        //transform.position = position;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -96,16 +89,8 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
 
     public void SetBulletPool(BulletPool bulletPool)
     {
-        // ✅ ПЕРЕДАЕМ ПУЛ ОРУЖИЮ, а не просто пустой метод
         if (_weapon != null)
-        {
             _weapon.SetBulletPool(bulletPool);
-            Debug.Log($"✅ Set bullet pool for enemy weapon: {_weapon != null}");
-        }
-        else
-        {
-            Debug.LogError($"❌ Enemy weapon is null!");
-        }
     }
 
     public void TakeDamage(int damage) =>
@@ -116,6 +101,7 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
         while (_isActive)
         {
             yield return _shootDelayWait;
+
             if (_isActive)
                 _weapon?.Shoot(transform.position);
         }

@@ -34,6 +34,22 @@ public class Bullet : MonoBehaviour, IInteractable
             ReturnToPool();
     }
 
+    public void Initialize(Vector2 direction, BulletOwner owner)
+    {
+        _direction = direction.normalized;
+        _owner = owner;
+
+        _spriteRenderer.color = owner == BulletOwner.Player ? Color.green : Color.red;
+
+        _rigidbody.velocity = _direction * _speed;
+
+        CancelInvoke(nameof(ReturnToPool));
+        Invoke(nameof(ReturnToPool), _lifeTime);
+    }
+
+    public void SetPool(BulletPool pool) =>
+        _bulletPool = pool;
+
     private bool TryHandleCollision(Collider2D other)
     {
         if (IsFriendlyFire(other))
@@ -53,22 +69,6 @@ public class Bullet : MonoBehaviour, IInteractable
         return (_owner == BulletOwner.Player && other.TryGetComponent<PlayerController>(out _)) ||
                (_owner == BulletOwner.Enemy && other.TryGetComponent<Enemy>(out _));
     }
-
-    public void Initialize(Vector2 direction, BulletOwner owner)
-    {
-        _direction = direction.normalized;
-        _owner = owner;
-
-        _spriteRenderer.color = owner == BulletOwner.Player ? Color.green : Color.red;
-
-        _rigidbody.velocity = _direction * _speed;
-
-        CancelInvoke(nameof(ReturnToPool));
-        Invoke(nameof(ReturnToPool), _lifeTime);
-    }
-
-    public void SetPool(BulletPool pool) =>
-        _bulletPool = pool;
 
     private void ReturnToPool()
     {

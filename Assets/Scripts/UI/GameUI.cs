@@ -111,6 +111,7 @@ public class GameUI : MonoBehaviour
 
     private void OnPlayButtonClick() =>
         OnPlayButtonClicked?.Invoke();
+
     private void OnRestartButtonClick() =>
         OnRestartButtonClicked?.Invoke();
 }

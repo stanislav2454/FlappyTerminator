@@ -12,12 +12,5 @@ public class CollisionHandler : MonoBehaviour
 
         if (other.TryGetComponent<Obstacle>(out var obstacle))
             ObstacleHit?.Invoke(obstacle.Type);
-        //// ИСПРАВЛЕНИЕ: Используем Obstacle вместо IObstacle
-        //if (other.TryGetComponent<Obstacle>(out _))
-        //    ObstacleHit?.Invoke();
-        ////if (other.TryGetComponent<IObstacle>(out _))
-        ////    ObstacleHit?.Invoke();
-        //////if (other.TryGetComponent<Boundary>(out _) || other.TryGetComponent<Ground>(out _) || other.TryGetComponent<Ceiling>(out _))
-        //////    ObstacleHit?.Invoke();
     }
 }

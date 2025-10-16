@@ -9,7 +9,7 @@ public class Obstacle : MonoBehaviour
 
 public enum ObstacleType
 {
-    Solid,      // Полностью блокирует
-    Boundary,   // Границы экрана
-    Ground      // Земля (может иметь особое поведение)
+    Solid,
+    Boundary,
+    Ground
 }

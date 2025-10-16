@@ -44,13 +44,6 @@ public class PlayerController : MonoBehaviour
         _collisionHandler.ObstacleHit -= OnObstacleHit;
     }
 
-    // ✅ НОВЫЙ МЕТОД - для установки пула оружию игрока
-    public void SetBulletPool(BulletPool bulletPool)
-    {
-        if (_weapon != null)
-            _weapon.SetBulletPool(bulletPool);
-    }
-
     public void ResetPlayer()
     {
         _mover?.Reset();
@@ -61,18 +54,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnObstacleHit(ObstacleType type)
     {
-        switch (type)
-        {
-            case ObstacleType.Solid:
-                _health?.TakeDamage(Damage);
-                break;
-            case ObstacleType.Boundary:
-                // Особое поведение для границ
-                break;
-            case ObstacleType.Ground:
-                // Особое поведение для земли
-                break;
-        }
+        if (type == ObstacleType.Solid)
+            _health?.TakeDamage(Damage);
     }
 
     private void OnJumpPressed() =>
@@ -80,9 +63,6 @@ public class PlayerController : MonoBehaviour
 
     private void OnShootPressed() =>
         _weapon?.Shoot(transform.position);
-
-    //private void OnObstacleHit() =>
-    //    _health?.TakeDamage(Damage);
 
     private void OnDiedInternal()
     {

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyGenerator : MonoBehaviour// переимновать на spawner
+public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private float _spawnDelay = 3f;
     [SerializeField] private float _minSpawnHeight = -2f;
@@ -10,6 +10,7 @@ public class EnemyGenerator : MonoBehaviour// переимновать на spaw
     [SerializeField] private GameManager _gameManager;
 
     private bool _canSpawn = false;
+    private bool _isSpawning = false;
     private WaitForSeconds _spawnWait;
     private Coroutine _spawnEnemiesRoutine;
 
@@ -30,7 +31,6 @@ public class EnemyGenerator : MonoBehaviour// переимновать на spaw
         {
             _gameManager.GameStarted += OnGameStarted;
             _gameManager.GameRestarted += OnGameStarted;
-            // _gameManager.GameRestarted += OnGameRestarted;
             _gameManager.PlayerDied += OnPlayerDied;
         }
     }
@@ -41,7 +41,6 @@ public class EnemyGenerator : MonoBehaviour// переимновать на spaw
         {
             _gameManager.GameStarted -= OnGameStarted;
             _gameManager.GameRestarted -= OnGameStarted;
-            // _gameManager.GameRestarted -= OnGameRestarted;
             _gameManager.PlayerDied -= OnPlayerDied;
         }
     }
@@ -49,13 +48,10 @@ public class EnemyGenerator : MonoBehaviour// переимновать на spaw
     public void ResetGenerator() =>
         _enemyPool?.ResetPool();
 
-    // Добавить защиту от множественного запуска
-    private bool _isSpawning = false;
-    //todo
     public void StartSpawning()
     {
         if (_isSpawning)
-            return; // ← ЗАЩИТА
+            return;
 
         _isSpawning = true;
         _spawnEnemiesRoutine = StartCoroutine(SpawnEnemies());
@@ -64,7 +60,8 @@ public class EnemyGenerator : MonoBehaviour// переимновать на spaw
     public void StopSpawning()
     {
         _canSpawn = false;
-        _isSpawning = false; // ← СБРОС ФЛАГА
+        _isSpawning = false;
+
         if (_spawnEnemiesRoutine != null)
         {
             StopCoroutine(_spawnEnemiesRoutine);
@@ -73,27 +70,18 @@ public class EnemyGenerator : MonoBehaviour// переимновать на spaw
     }
 
     private void OnGameStarted()
-    {//  зачем два одинаковых метода ?
+    {
         _canSpawn = true;
         StartSpawning();
     }
 
-    //private void OnGameRestarted()
-    //{//  зачем два одинаковых метода ?
-    //    _canSpawn = true;
-    //    StartSpawning();
-    //}
-
-    private void OnPlayerDied()
-    {
+    private void OnPlayerDied() =>
         StopSpawning();
-    }
 
     private IEnumerator SpawnEnemies()
     {
         while (_canSpawn)
         {
-            // ✅ ПРОВЕРЯЕМ ЕСТЬ ЛИ СВОБОДНЫЕ ВРАГИ В ПУЛЕ
             if (_enemyPool != null && _enemyPool.GetPooledObjectsCount() > 0)
                 SpawnEnemy();
             else
@@ -105,7 +93,6 @@ public class EnemyGenerator : MonoBehaviour// переимновать на spaw
 
     private void SpawnEnemy()
     {
-        Debug.Log($"SpawnEnemy called from: {new System.Diagnostics.StackTrace()}");
         float spawnPositionY = Random.Range(_minSpawnHeight, _maxSpawnHeight);
         Vector3 spawnPoint = new Vector3(transform.position.x, spawnPositionY, transform.position.z);
 

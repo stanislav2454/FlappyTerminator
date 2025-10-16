@@ -7,11 +7,9 @@ public class ScoreManager : MonoBehaviour
 
     [SerializeField] private GameManager _gameManager;
 
-    // Событие для обновления UI
-    public event Action<int> ScoreChanged;
-
     private int _currentScore;
-    public int CurrentScore => _currentScore;
+
+    public event Action<int> ScoreChanged;
 
     private void Awake()
     {
@@ -23,8 +21,8 @@ public class ScoreManager : MonoBehaviour
     {
         if (_gameManager != null)
         {
-            _gameManager.GameStarted += OnGameStarted;
-            _gameManager.GameRestarted += OnGameRestarted;
+            _gameManager.GameStarted += ResetScore;
+            _gameManager.GameRestarted += ResetScore;
         }
     }
 
@@ -32,14 +30,14 @@ public class ScoreManager : MonoBehaviour
     {
         if (_gameManager != null)
         {
-            _gameManager.GameStarted -= OnGameStarted;
-            _gameManager.GameRestarted -= OnGameRestarted;
+            _gameManager.GameStarted -= ResetScore;
+            _gameManager.GameRestarted -= ResetScore;
         }
     }
 
     public void AddScore(int points)
     {
-        if (points <= 0) 
+        if (points <= 0)
             return;
 
         _currentScore += points;
@@ -50,15 +48,5 @@ public class ScoreManager : MonoBehaviour
     {
         _currentScore = DefaultScoreValue;
         ScoreChanged?.Invoke(_currentScore);
-    }
-
-    private void OnGameStarted()
-    {// DRY
-        ResetScore();
-    }
-
-    private void OnGameRestarted()
-    {// DRY
-        ResetScore();
     }
 }

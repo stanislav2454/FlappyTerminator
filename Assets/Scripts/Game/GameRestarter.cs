@@ -2,7 +2,7 @@
 
 public class GameRestarter : MonoBehaviour
 {
-    [SerializeField] private EnemyGenerator _enemyGenerator;
+    [SerializeField] private EnemySpawner _enemySpawner;
     [SerializeField] private PlayerController _playerController;
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private BulletPool _bulletPool;
@@ -10,8 +10,8 @@ public class GameRestarter : MonoBehaviour
 
     private void Awake()
     {
-        if (_enemyGenerator == null)
-            Debug.LogError("Компонент \"EnemyGenerator\" не установлен в инспекторе!");
+        if (_enemySpawner == null)
+            Debug.LogError("Компонент \"EnemySpawner\" не установлен в инспекторе!");
 
         if (_playerController == null)
             Debug.LogError("Компонент \"PlayerController\" не установлен в инспекторе!");
@@ -40,7 +40,7 @@ public class GameRestarter : MonoBehaviour
 
     public void RestartGame()
     {
-        _enemyGenerator?.ResetGenerator();
+        _enemySpawner?.ResetGenerator();
         _bulletPool?.ResetPool();
 
         if (_playerController != null)

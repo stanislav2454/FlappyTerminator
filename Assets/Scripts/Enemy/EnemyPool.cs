@@ -4,13 +4,6 @@ public class EnemyPool : GenericPool<Enemy>
 {
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private BulletPool _bulletPool;
-    //добавить мониторинг
-    public bool CanSpawnEnemy => GetPooledObjectsCount() > 0;
-
-    public void LogPoolStatus()
-    {
-        Debug.Log($"EnemyPool: {GetPooledObjectsCount()} available, {GetActiveObjectsCount()} active");
-    }
 
     protected override Enemy CreateNewObject()
     {
@@ -33,10 +26,5 @@ public class EnemyPool : GenericPool<Enemy>
         var enemy = GetObject(position);
 
         return enemy;
-    }
-
-    public void ReturnEnemy(Enemy enemy)
-    {
-        ReturnObject(enemy);
     }
 }

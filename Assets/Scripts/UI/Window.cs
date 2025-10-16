@@ -28,12 +28,12 @@ public abstract class Window : MonoBehaviour
     protected abstract void OnButtonClick();
 
     protected void SetWindowState(float alpha, bool interactable, bool blocksRaycasts)
-    {// Общий метод для обоих классов
+    {
         if (WindowGroup != null)
         {
             WindowGroup.alpha = alpha;
             WindowGroup.interactable = interactable;
-            WindowGroup.blocksRaycasts = blocksRaycasts; // РАСКОММЕНТИРОВАТЬ!
+            WindowGroup.blocksRaycasts = blocksRaycasts;
         }
 
         if (ActionButton != null)

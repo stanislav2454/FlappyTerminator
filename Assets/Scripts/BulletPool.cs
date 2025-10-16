@@ -2,20 +2,18 @@ using UnityEngine;
 
 public class BulletPool : GenericPool<Bullet>
 {
-    public Bullet GetBullet(Vector3 position, Vector2 direction, BulletOwner owner)
+    protected override Bullet CreateNewObject()
     {
-        var bullet = GetObject(position);
-
-        bullet?.Initialize(direction, owner);
+        var bullet = base.CreateNewObject();
+        bullet?.SetPool(this);
 
         return bullet;
     }
 
-    protected override Bullet CreateNewObject()
+    public Bullet GetBullet(Vector3 position, Vector2 direction, BulletOwner owner)
     {
-        var bullet = base.CreateNewObject();
-
-        bullet?.SetPool(this);
+        var bullet = GetObject(position);
+        bullet?.Initialize(direction, owner);
 
         return bullet;
     }
