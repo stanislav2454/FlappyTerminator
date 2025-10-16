@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 3294520025036144784}
   - component: {fileID: 222533466859111368}
   - component: {fileID: 319836193809248896}
+  - component: {fileID: 2561104761337710406}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -230,11 +231,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scoreValue: 1
-  _shootDelay: 2
   _movementAmplitude: 1
   _movementFrequency: 1
-  _bulletPrefab: {fileID: 6032552734835986631, guid: e5014904a833a6046932028d176844a1, type: 3}
-  _bulletPool: {fileID: 0}
+  _weapon: {fileID: 2561104761337710406}
 --- !u!114 &319836193809248896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,6 +247,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxHealth: 1
+--- !u!114 &2561104761337710406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4747061081831582804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d091d49f99a6d4d8c0381003ee1661, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _bulletPrefab: {fileID: 6032552734835986631, guid: e5014904a833a6046932028d176844a1, type: 3}
+  _bulletPool: {fileID: 0}
+  _cooldown: 0.5
 --- !u!1 &6898101988928453113
 GameObject:
   m_ObjectHideFlags: 0

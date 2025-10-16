@@ -1,70 +1,42 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
-public class EnemyPool : MonoBehaviour
+public class EnemyPool : GenericPool<Enemy>
 {
-    [SerializeField] private int _numberEnemiesPool = 10;
-    [SerializeField] private Enemy _enemyPrefab;
-    [SerializeField] private Transform _container;
-    [SerializeField] private EventBus _eventBus;
+    [SerializeField] private GameManager _gameManager;
     [SerializeField] private BulletPool _bulletPool;
+    //добавить мониторинг
+    public bool CanSpawnEnemy => GetPooledObjectsCount() > 0;
 
-    private Queue<Enemy> _pool = new Queue<Enemy>();
-    private List<Enemy> _activeEnemies = new List<Enemy>();
-
-    private void Awake()
+    public void LogPoolStatus()
     {
-        InitializePool();
+        Debug.Log($"EnemyPool: {GetPooledObjectsCount()} available, {GetActiveObjectsCount()} active");
+    }
+
+    protected override Enemy CreateNewObject()
+    {
+        var enemy = base.CreateNewObject();
+
+        if (enemy != null)
+        {
+            enemy.SetGameManager(_gameManager);
+            enemy.EnemyDisabled += ReturnObject;
+
+            if (_bulletPool != null)
+                enemy.SetBulletPool(_bulletPool);
+        }
+
+        return enemy;
     }
 
     public Enemy GetEnemy(Vector3 position)
     {
-        Enemy enemy;
-
-        if (_pool.Count > 0)
-            enemy = _pool.Dequeue();
-        else
-            enemy = CreateNewEnemy();
-
-        enemy.transform.position = position;
-        enemy.gameObject.SetActive(true);
-        _activeEnemies.Add(enemy);
+        var enemy = GetObject(position);
 
         return enemy;
     }
 
     public void ReturnEnemy(Enemy enemy)
     {
-        if (enemy == null)
-            return;
-
-        enemy.gameObject.SetActive(false);
-        _activeEnemies.Remove(enemy);
-        _pool.Enqueue(enemy);
-    }
-
-    public void ResetPool()
-    {
-        foreach (var enemy in _activeEnemies.ToArray())
-            ReturnEnemy(enemy);
-    }
-
-    private void InitializePool()
-    {
-        for (int i = 0; i < _numberEnemiesPool; i++)
-        {
-            var enemy = CreateNewEnemy();
-            _pool.Enqueue(enemy);
-        }
-    }
-
-    private Enemy CreateNewEnemy()
-    {
-        var enemy = Instantiate(_enemyPrefab, _container);
-        enemy.SetEventBus(_eventBus);
-        enemy.SetBulletPool(_bulletPool);
-        enemy.EnemyDisabled += ReturnEnemy;
-        enemy.gameObject.SetActive(false);
-        return enemy;
+        ReturnObject(enemy);
     }
 }

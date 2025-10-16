@@ -4,17 +4,11 @@ public class StartScreen : Window
 {
     public event Action PlayButtonClicked;
 
-    public override void Close()
-    {
-        WindowGroup.alpha = MinAlpha;
-        ActionButton.interactable = false;
-    }
+    public override void Close() =>
+        SetWindowState(MinAlpha, false, false);
 
-    public override void Open()
-    {
-        WindowGroup.alpha = MaxAlpha;
-        ActionButton.interactable = true;
-    }
+    public override void Open() =>
+        SetWindowState(MaxAlpha, true, true);
 
     protected override void OnButtonClick()
     {

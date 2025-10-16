@@ -30,30 +30,28 @@ public class Bullet : MonoBehaviour, IInteractable
         if (other == null)
             return;
 
-        if (_owner == BulletOwner.Player && other.TryGetComponent<PlayerController>(out _))
-            return;
-
-        if (_owner == BulletOwner.Enemy && other.TryGetComponent<Enemy>(out _))
-            return;
-
-        if (_owner == BulletOwner.Player && other.TryGetComponent<Enemy>(out _))
-        {
-            if (other.TryGetComponent(out IDamageable damageable))
-                damageable.TakeDamage(_damage);
-
+        if (TryHandleCollision(other))
             ReturnToPool();
-        }
-        else if (_owner == BulletOwner.Enemy && other.TryGetComponent<PlayerController>(out _))
-        {
-            if (other.TryGetComponent(out IDamageable damageable))
-                damageable.TakeDamage(_damage);
+    }
 
-            ReturnToPool();
-        }
-        else if (other.TryGetComponent<Boundary>(out _))
+    private bool TryHandleCollision(Collider2D other)
+    {
+        if (IsFriendlyFire(other))
+            return false;
+
+        if (other.TryGetComponent(out IDamageable damageable))
         {
-            ReturnToPool();
+            damageable.TakeDamage(_damage);
+            return true;
         }
+
+        return other.TryGetComponent(out Obstacle _);
+    }
+
+    private bool IsFriendlyFire(Collider2D other)
+    {
+        return (_owner == BulletOwner.Player && other.TryGetComponent<PlayerController>(out _)) ||
+               (_owner == BulletOwner.Enemy && other.TryGetComponent<Enemy>(out _));
     }
 
     public void Initialize(Vector2 direction, BulletOwner owner)
@@ -62,7 +60,7 @@ public class Bullet : MonoBehaviour, IInteractable
         _owner = owner;
 
         _spriteRenderer.color = owner == BulletOwner.Player ? Color.green : Color.red;
-        
+
         _rigidbody.velocity = _direction * _speed;
 
         CancelInvoke(nameof(ReturnToPool));

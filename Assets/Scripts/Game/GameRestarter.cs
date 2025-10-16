@@ -4,7 +4,7 @@ public class GameRestarter : MonoBehaviour
 {
     [SerializeField] private EnemyGenerator _enemyGenerator;
     [SerializeField] private PlayerController _playerController;
-    [SerializeField] private EventBus _eventBus;
+    [SerializeField] private GameManager _gameManager;
     [SerializeField] private BulletPool _bulletPool;
     [SerializeField] private InputHandler _inputHandler;
 
@@ -16,8 +16,8 @@ public class GameRestarter : MonoBehaviour
         if (_playerController == null)
             Debug.LogError("Компонент \"PlayerController\" не установлен в инспекторе!");
 
-        if (_eventBus == null)
-            Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
+        if (_gameManager == null)
+            Debug.LogError("Компонент \"GameManager\" не установлен в инспекторе!");
 
         if (_bulletPool == null)
             Debug.LogError("Компонент \"BulletPool\" не установлен в инспекторе!");
@@ -28,17 +28,17 @@ public class GameRestarter : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_eventBus != null)
-            _eventBus.GameRestarted += OnGameRestarted;
+        if (_gameManager != null)
+            _gameManager.GameRestarted += OnGameRestarted;
     }
 
     private void OnDisable()
     {
-        if (_eventBus != null)
-            _eventBus.GameRestarted -= OnGameRestarted;
+        if (_gameManager != null)
+            _gameManager.GameRestarted -= OnGameRestarted;
     }
 
-    private void OnGameRestarted()
+    public void RestartGame()
     {
         _enemyGenerator?.ResetGenerator();
         _bulletPool?.ResetPool();
@@ -46,6 +46,11 @@ public class GameRestarter : MonoBehaviour
         if (_playerController != null)
             _playerController.ResetPlayer();
 
-        _inputHandler?.ResetInput();
+        _inputHandler?.EnableInput();
+    }
+
+    private void OnGameRestarted()
+    {
+        RestartGame();
     }
 }

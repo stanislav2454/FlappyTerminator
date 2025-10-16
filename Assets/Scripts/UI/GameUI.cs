@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
+using System;
 
 public class GameUI : MonoBehaviour
 {
@@ -7,7 +8,11 @@ public class GameUI : MonoBehaviour
     [SerializeField] private EndGameScreen _endGameScreen;
     [SerializeField] private TMP_Text _scoreText;
     [SerializeField] private GameObject _hud;
-    [SerializeField] private EventBus _eventBus;
+    [SerializeField] private GameManager _gameManager;
+    [SerializeField] private ScoreManager _scoreManager;
+
+    public event Action OnPlayButtonClicked;
+    public event Action OnRestartButtonClicked;
 
     private void Awake()
     {
@@ -23,8 +28,11 @@ public class GameUI : MonoBehaviour
         if (_hud == null)
             Debug.LogError("Компонент \"HUD (Heads-Up Display(интерфейс отображения информации на экране))\" не установлен в инспекторе!");
 
-        if (_eventBus == null)
-            Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
+        if (_gameManager == null)
+            Debug.LogError("Компонент \"GameManager\" не установлен в инспекторе!");
+
+        if (_scoreManager == null)
+            Debug.LogError("Компонент \"ScoreManager\" не установлен в инспекторе!");
     }
 
     private void Start()
@@ -34,30 +42,40 @@ public class GameUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_eventBus != null)
+        if (_gameManager != null)
         {
-            _eventBus.ScoreChanged += OnScoreChanged;
-            _eventBus.PlayerDied += OnPlayerDied;
-            _eventBus.GameStarted += OnGameStarted;
-            _eventBus.GameRestarted += OnGameRestarted;
+            _gameManager.PlayerDied += OnPlayerDied;
+            _gameManager.GameStarted += OnGameStarted;
+            _gameManager.GameRestarted += OnGameRestarted;
         }
 
-        _startScreen.PlayButtonClicked += OnPlayButtonClick;
-        _endGameScreen.RestartButtonClicked += OnRestartButtonClick;
+        if (_scoreManager != null)
+            _scoreManager.ScoreChanged += OnScoreChanged;
+
+        if (_startScreen != null)
+            _startScreen.PlayButtonClicked += OnPlayButtonClick;
+
+        if (_endGameScreen != null)
+            _endGameScreen.RestartButtonClicked += OnRestartButtonClick;
     }
 
     private void OnDisable()
     {
-        if (_eventBus != null)
+        if (_gameManager != null)
         {
-            _eventBus.ScoreChanged -= OnScoreChanged;
-            _eventBus.PlayerDied -= OnPlayerDied;
-            _eventBus.GameStarted -= OnGameStarted;
-            _eventBus.GameRestarted -= OnGameRestarted;
+            _gameManager.PlayerDied -= OnPlayerDied;
+            _gameManager.GameStarted -= OnGameStarted;
+            _gameManager.GameRestarted -= OnGameRestarted;
         }
 
-        _startScreen.PlayButtonClicked -= OnPlayButtonClick;
-        _endGameScreen.RestartButtonClicked -= OnRestartButtonClick;
+        if (_scoreManager != null)
+            _scoreManager.ScoreChanged -= OnScoreChanged;
+
+        if (_startScreen != null)
+            _startScreen.PlayButtonClicked -= OnPlayButtonClick;
+
+        if (_endGameScreen != null)
+            _endGameScreen.RestartButtonClicked -= OnRestartButtonClick;
     }
 
     private void InitializeUI()
@@ -67,8 +85,11 @@ public class GameUI : MonoBehaviour
         _endGameScreen.Close();
     }
 
-    private void OnScoreChanged(int score) =>
-        _scoreText.text = $"Score: {score}";
+    private void OnScoreChanged(int score)
+    {
+        if (_scoreText != null)
+            _scoreText.text = $"Score: {score}";
+    }
 
     private void OnPlayerDied()
     {
@@ -89,8 +110,7 @@ public class GameUI : MonoBehaviour
     }
 
     private void OnPlayButtonClick() =>
-        _eventBus?.PublishGameStarted();
-
+        OnPlayButtonClicked?.Invoke();
     private void OnRestartButtonClick() =>
-        _eventBus?.PublishGameRestarted();
+        OnRestartButtonClicked?.Invoke();
 }

@@ -1,56 +1,64 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
     private const int DefaultScoreValue = 0;
 
-    [SerializeField] private EventBus _eventBus;
+    [SerializeField] private GameManager _gameManager;
+
+    // Событие для обновления UI
+    public event Action<int> ScoreChanged;
 
     private int _currentScore;
-
     public int CurrentScore => _currentScore;
 
     private void Awake()
     {
-        if (_eventBus == null)
-            Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
+        if (_gameManager == null)
+            Debug.LogError("Компонент \"GameManager\" не установлен в инспекторе!");
     }
 
     private void OnEnable()
     {
-        if (_eventBus != null)
+        if (_gameManager != null)
         {
-            _eventBus.EnemyDestroyed += OnEnemyDestroyed;
-            _eventBus.GameRestarted += OnGameRestarted;
-            _eventBus.GameStarted += OnGameStarted;
+            _gameManager.GameStarted += OnGameStarted;
+            _gameManager.GameRestarted += OnGameRestarted;
         }
     }
 
     private void OnDisable()
     {
-        if (_eventBus != null)
+        if (_gameManager != null)
         {
-            _eventBus.EnemyDestroyed -= OnEnemyDestroyed;
-            _eventBus.GameRestarted -= OnGameRestarted;
-            _eventBus.GameStarted -= OnGameStarted;
+            _gameManager.GameStarted -= OnGameStarted;
+            _gameManager.GameRestarted -= OnGameRestarted;
         }
     }
 
-    private void OnEnemyDestroyed(int points)
+    public void AddScore(int points)
     {
+        if (points <= 0) 
+            return;
+
         _currentScore += points;
-        _eventBus?.PublishScoreChanged(_currentScore);
+        ScoreChanged?.Invoke(_currentScore);
     }
 
-    private void OnGameRestarted()
+    public void ResetScore()
     {
         _currentScore = DefaultScoreValue;
-        _eventBus?.PublishScoreChanged(_currentScore);
+        ScoreChanged?.Invoke(_currentScore);
     }
 
     private void OnGameStarted()
-    {
-        _currentScore = DefaultScoreValue;
-        _eventBus?.PublishScoreChanged(_currentScore);
+    {// DRY
+        ResetScore();
+    }
+
+    private void OnGameRestarted()
+    {// DRY
+        ResetScore();
     }
 }

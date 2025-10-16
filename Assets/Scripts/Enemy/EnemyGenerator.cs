@@ -1,79 +1,111 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyGenerator : MonoBehaviour
+public class EnemyGenerator : MonoBehaviour// переимновать на spawner
 {
     [SerializeField] private float _spawnDelay = 3f;
     [SerializeField] private float _minSpawnHeight = -2f;
     [SerializeField] private float _maxSpawnHeight = 3f;
     [SerializeField] private EnemyPool _enemyPool;
-    [SerializeField] private EventBus _eventBus;
+    [SerializeField] private GameManager _gameManager;
 
     private bool _canSpawn = false;
+    private WaitForSeconds _spawnWait;
+    private Coroutine _spawnEnemiesRoutine;
 
     private void Awake()
     {
+        _spawnWait = new WaitForSeconds(_spawnDelay);
+
         if (_enemyPool == null)
             Debug.LogError("Компонент \"EnemyPool\" не установлен в инспекторе!");
 
-        if (_eventBus == null)
-            Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
+        if (_gameManager == null)
+            Debug.LogError("Компонент \"GameManager\" не установлен в инспекторе!");
     }
 
     private void OnEnable()
     {
-        if (_eventBus != null)
+        if (_gameManager != null)
         {
-            _eventBus.GameStarted += OnGameStarted;
-            _eventBus.GameRestarted += OnGameRestarted;
-            _eventBus.PlayerDied += OnPlayerDied;
+            _gameManager.GameStarted += OnGameStarted;
+            _gameManager.GameRestarted += OnGameStarted;
+            // _gameManager.GameRestarted += OnGameRestarted;
+            _gameManager.PlayerDied += OnPlayerDied;
         }
     }
 
     private void OnDisable()
     {
-        if (_eventBus != null)
+        if (_gameManager != null)
         {
-            _eventBus.GameStarted -= OnGameStarted;
-            _eventBus.GameRestarted -= OnGameRestarted;
-            _eventBus.PlayerDied -= OnPlayerDied;
+            _gameManager.GameStarted -= OnGameStarted;
+            _gameManager.GameRestarted -= OnGameStarted;
+            // _gameManager.GameRestarted -= OnGameRestarted;
+            _gameManager.PlayerDied -= OnPlayerDied;
         }
     }
 
     public void ResetGenerator() =>
         _enemyPool?.ResetPool();
 
-    private void OnGameStarted()
+    // Добавить защиту от множественного запуска
+    private bool _isSpawning = false;
+    //todo
+    public void StartSpawning()
     {
-        _canSpawn = true;
-        StartCoroutine(SpawnEnemies());
+        if (_isSpawning)
+            return; // ← ЗАЩИТА
+
+        _isSpawning = true;
+        _spawnEnemiesRoutine = StartCoroutine(SpawnEnemies());
     }
 
-    private void OnGameRestarted()
+    public void StopSpawning()
     {
-        _canSpawn = true;
-        StartCoroutine(SpawnEnemies());
+        _canSpawn = false;
+        _isSpawning = false; // ← СБРОС ФЛАГА
+        if (_spawnEnemiesRoutine != null)
+        {
+            StopCoroutine(_spawnEnemiesRoutine);
+            _spawnEnemiesRoutine = null;
+        }
     }
+
+    private void OnGameStarted()
+    {//  зачем два одинаковых метода ?
+        _canSpawn = true;
+        StartSpawning();
+    }
+
+    //private void OnGameRestarted()
+    //{//  зачем два одинаковых метода ?
+    //    _canSpawn = true;
+    //    StartSpawning();
+    //}
 
     private void OnPlayerDied()
     {
-        _canSpawn = false;
-        StopAllCoroutines(); 
+        StopSpawning();
     }
 
     private IEnumerator SpawnEnemies()
     {
-        var wait = new WaitForSeconds(_spawnDelay);
-
         while (_canSpawn)
         {
-            SpawnEnemy();
-            yield return wait;
+            // ✅ ПРОВЕРЯЕМ ЕСТЬ ЛИ СВОБОДНЫЕ ВРАГИ В ПУЛЕ
+            if (_enemyPool != null && _enemyPool.GetPooledObjectsCount() > 0)
+                SpawnEnemy();
+            else
+                Debug.LogWarning("EnemyPool is empty! Waiting for enemies to return...");
+
+            yield return _spawnWait;
         }
     }
 
     private void SpawnEnemy()
     {
+        Debug.Log($"SpawnEnemy called from: {new System.Diagnostics.StackTrace()}");
         float spawnPositionY = Random.Range(_minSpawnHeight, _maxSpawnHeight);
         Vector3 spawnPoint = new Vector3(transform.position.x, spawnPositionY, transform.position.z);
 

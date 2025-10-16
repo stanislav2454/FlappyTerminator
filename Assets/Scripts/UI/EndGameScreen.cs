@@ -4,20 +4,12 @@ public class EndGameScreen : Window
 {
     public event Action RestartButtonClicked;
 
-    public override void Close()
-    {
-        WindowGroup.alpha = MinAlpha;
-        ActionButton.interactable = false;
-    }
+    public override void Close() =>
+        SetWindowState(MinAlpha, false, false);
 
-    public override void Open()
-    {
-        WindowGroup.alpha = MaxAlpha;
-        ActionButton.interactable = true;
-    }
+    public override void Open() =>
+        SetWindowState(MaxAlpha, true, true);
 
-    protected override void OnButtonClick()
-    {
+    protected override void OnButtonClick() =>
         RestartButtonClicked?.Invoke();
-    }
 }

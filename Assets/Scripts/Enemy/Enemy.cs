@@ -1,22 +1,23 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Health))]
+[RequireComponent(typeof(Health), typeof(EnemyWeapon))]
 public class Enemy : MonoBehaviour, IInteractable, IDamageable
 {
     private const float DefaultTimeValue = 0f;
+    private const float Delay = 2f;
 
     [SerializeField] private int _scoreValue = 1;
-    [SerializeField] private float _shootDelay = 2f;
     [SerializeField] private float _movementAmplitude = 1f;
     [SerializeField] private float _movementFrequency = 1f;
-    [SerializeField] private Bullet _bulletPrefab;
-    [SerializeField] private BulletPool _bulletPool;
+    [SerializeField] private EnemyWeapon _weapon;
 
-    private EventBus _eventBus;
+    private GameManager _gameManager;
     private Vector3 _startPosition;
     private Health _health;
     private float _time;
     private bool _isActive;
+    private Coroutine _shootingCoroutine;
+    private WaitForSeconds _shootDelayWait;
 
     public event System.Action<Enemy> EnemyDisabled;
 
@@ -24,11 +25,10 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
     {
         _health = GetComponent<Health>();
 
-        if (_bulletPrefab == null)
-            Debug.LogError("Компонент \"Bullet Prefab\" не установлен в инспекторе!");
+        if (_weapon == null)
+            Debug.LogError("Компонент \"EnemyWeapon\" не установлен в инспекторе!");
 
-        if (_bulletPool == null)
-            Debug.LogWarning("Компонент \"BulletPool\" не установлен в инспекторе!");
+        _shootDelayWait = new WaitForSeconds(Delay);
     }
 
     private void OnEnable()
@@ -43,7 +43,8 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
             _health.ResetHealth();
         }
 
-        StartCoroutine(ShootingRoutine());
+        if (_weapon != null)
+            _shootingCoroutine = StartCoroutine(ShootingRoutine());
     }
 
     private void OnDisable()
@@ -52,6 +53,15 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
 
         if (_health != null)
             _health.Died -= OnDied;
+
+        if (_shootingCoroutine != null)
+        {
+            StopCoroutine(_shootingCoroutine);
+            _shootingCoroutine = null;
+        }
+
+        //StopAllCoroutines();//!!!!!!!!!!!!!!
+        _weapon?.StopShooting();
     }
 
     private void Update()
@@ -60,15 +70,43 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
             return;
 
         _time += Time.deltaTime;
-        float newY = _startPosition.y + Mathf.Sin(_time * _movementFrequency) * _movementAmplitude;
-        transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+        // ✅ ОПТИМИЗИРОВАННОЕ ДВИЖЕНИЕ - меньше аллокаций
+        var position = transform.position;
+        position.y = _startPosition.y + Mathf.Sin(_time * _movementFrequency) * _movementAmplitude;
+        transform.position = position;
+
+        //float newY = _startPosition.y + Mathf.Sin(_time * _movementFrequency) * _movementAmplitude;
+
+        //var position = transform.position;
+        //position.y = newY;
+        //transform.position = position;
     }
 
-    public void SetEventBus(EventBus eventBus) =>
-        _eventBus = eventBus;
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other != null && other.TryGetComponent<Obstacle>(out _))
+        {
+            EnemyDisabled?.Invoke(this);
+            gameObject.SetActive(false);
+        }
+    }
 
-    public void SetBulletPool(BulletPool bulletPool) =>
-        _bulletPool = bulletPool;
+    public void SetGameManager(GameManager gameManager) =>
+        _gameManager = gameManager;
+
+    public void SetBulletPool(BulletPool bulletPool)
+    {
+        // ✅ ПЕРЕДАЕМ ПУЛ ОРУЖИЮ, а не просто пустой метод
+        if (_weapon != null)
+        {
+            _weapon.SetBulletPool(bulletPool);
+            Debug.Log($"✅ Set bullet pool for enemy weapon: {_weapon != null}");
+        }
+        else
+        {
+            Debug.LogError($"❌ Enemy weapon is null!");
+        }
+    }
 
     public void TakeDamage(int damage) =>
         _health?.TakeDamage(damage);
@@ -77,34 +115,15 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
     {
         while (_isActive)
         {
-            yield return new WaitForSeconds(_shootDelay);
+            yield return _shootDelayWait;
             if (_isActive)
-                Shoot();
-        }
-    }
-
-    private void Shoot()
-    {
-        if (_bulletPrefab == null)
-            return;
-
-        Vector2 shootDirection = Vector2.left;
-        Vector3 spawnPosition = transform.position;
-
-        if (_bulletPool != null)
-        {
-            var bullet = _bulletPool.GetBullet(spawnPosition, shootDirection, BulletOwner.Enemy);
-        }
-        else
-        {
-            var bullet = Instantiate(_bulletPrefab, spawnPosition, Quaternion.identity);
-            bullet.Initialize(shootDirection, BulletOwner.Enemy);
+                _weapon?.Shoot(transform.position);
         }
     }
 
     private void OnDied()
     {
-        _eventBus?.PublishEnemyDestroyed(_scoreValue);
+        _gameManager?.EnemyDestroyed(_scoreValue);
         EnemyDisabled?.Invoke(this);
         gameObject.SetActive(false);
     }

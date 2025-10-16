@@ -3,39 +3,38 @@ using System;
 
 public class InputHandler : MonoBehaviour
 {
-    [SerializeField] private EventBus _eventBus;
-
-    public event Action JumpPressed;
-    public event Action ShootPressed;
-
+    [SerializeField] private GameManager _gameManager;
     [SerializeField] private KeyCode _jumpKey = KeyCode.Space;
     [SerializeField] private KeyCode _shootKey = KeyCode.X;
 
     private bool _inputEnabled = false;
 
+    public event Action JumpPressed;
+    public event Action ShootPressed;
+
     private void Awake()
     {
-        if (_eventBus == null)
-            Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
+        if (_gameManager == null)
+            Debug.LogError("Компонент \"GameManager\" не установлен в инспекторе!");
     }
 
     private void OnEnable()
     {
-        if (_eventBus != null)
+        if (_gameManager != null)
         {
-            _eventBus.GameStarted += OnGameStarted;
-            _eventBus.GameRestarted += OnGameRestarted;
-            _eventBus.PlayerDied += OnPlayerDied;
+            _gameManager.GameStarted += OnGameStarted;
+            _gameManager.GameRestarted += OnGameRestarted;
+            _gameManager.PlayerDied += OnPlayerDied;
         }
     }
 
     private void OnDisable()
     {
-        if (_eventBus != null)
+        if (_gameManager != null)
         {
-            _eventBus.GameStarted -= OnGameStarted;
-            _eventBus.GameRestarted -= OnGameRestarted;
-            _eventBus.PlayerDied -= OnPlayerDied;
+            _gameManager.GameStarted -= OnGameStarted;
+            _gameManager.GameRestarted -= OnGameRestarted;
+            _gameManager.PlayerDied -= OnPlayerDied;
         }
     }
 
@@ -51,18 +50,18 @@ public class InputHandler : MonoBehaviour
             ShootPressed?.Invoke();
     }
 
-    public void ResetInput()
-    {
+    public void EnableInput() =>
         _inputEnabled = true;
-        StopAllCoroutines();
-    }
+
+    public void DisableInput() =>
+        _inputEnabled = false;
 
     private void OnGameStarted() =>
-        _inputEnabled = true;
+        EnableInput();
 
     private void OnGameRestarted() =>
-        _inputEnabled = true;
+        EnableInput();
 
     private void OnPlayerDied() =>
-        _inputEnabled = false;
+        DisableInput();
 }

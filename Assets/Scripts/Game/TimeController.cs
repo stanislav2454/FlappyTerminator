@@ -5,31 +5,31 @@ public class TimeController : MonoBehaviour
     private const float TimeScaleReal = 1f;
     private const float RealTimePause = 0f;
 
-    [SerializeField] private EventBus _eventBus;
+    [SerializeField] private GameManager _gameManager;
 
     private void Awake()
     {
-        if (_eventBus == null)
-            Debug.LogError("Компонент \"EventBus\" не установлен в инспекторе!");
+        if (_gameManager == null)
+            Debug.LogError("Компонент \"GameManager\" не установлен в инспекторе!");
     }
 
     private void OnEnable()
     {
-        if (_eventBus != null)
+        if (_gameManager != null)
         {
-            _eventBus.GameStarted += OnGameStarted;
-            _eventBus.GameRestarted += OnGameRestarted;
-            _eventBus.PlayerDied += OnPlayerDied;
+            _gameManager.GameStarted += OnGameStarted;
+            _gameManager.GameRestarted += OnGameRestarted;
+            _gameManager.PlayerDied += OnPlayerDied;
         }
     }
 
     private void OnDisable()
     {
-        if (_eventBus != null)
+        if (_gameManager != null)
         {
-            _eventBus.GameStarted -= OnGameStarted;
-            _eventBus.GameRestarted -= OnGameRestarted;
-            _eventBus.PlayerDied -= OnPlayerDied;
+            _gameManager.GameStarted -= OnGameStarted;
+            _gameManager.GameRestarted -= OnGameRestarted;
+            _gameManager.PlayerDied -= OnPlayerDied;
         }
     }
 
@@ -38,15 +38,19 @@ public class TimeController : MonoBehaviour
         Time.timeScale = RealTimePause;
     }
 
+    public void SetNormalTime() =>
+        Time.timeScale = TimeScaleReal;
+
+    public void SetPausedTime() =>
+        Time.timeScale = RealTimePause;
+
+
     private void OnGameStarted() =>
-        SetTimeScale(TimeScaleReal);
+        SetNormalTime();
 
     private void OnGameRestarted() =>
-        SetTimeScale(TimeScaleReal);
+        SetNormalTime();
 
     private void OnPlayerDied() =>
-        SetTimeScale(RealTimePause);
-
-    private void SetTimeScale(float scale) =>
-        Time.timeScale = scale;
+        SetPausedTime();
 }
