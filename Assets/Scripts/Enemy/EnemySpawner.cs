@@ -84,8 +84,6 @@ public class EnemySpawner : MonoBehaviour
         {
             if (_enemyPool != null && _enemyPool.GetPooledObjectsCount() > 0)
                 SpawnEnemy();
-            else
-                Debug.LogWarning("EnemyPool is empty! Waiting for enemies to return...");
 
             yield return _spawnWait;
         }

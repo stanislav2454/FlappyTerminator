@@ -2,8 +2,6 @@
 
 public class PlayerWeapon : Weapon
 {
-    [SerializeField] private Transform _shootPoint;
-
     private void Awake()
     {
         _owner = BulletOwner.Player;

@@ -13,7 +13,7 @@ public class EnemyWeapon : Weapon
             return;
 
         Vector2 shootDirection = Vector2.left;
-        ProcessShoot(shootDirection, position);
+        ProcessShoot(shootDirection, _shootPoint.position);
 
         if (_cooldownCoroutine != null)
             StopCoroutine(_cooldownCoroutine);

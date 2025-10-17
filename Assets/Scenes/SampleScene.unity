@@ -817,7 +817,7 @@ GameObject:
   - component: {fileID: 1216162879}
   - component: {fileID: 1216162878}
   - component: {fileID: 1216162877}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
@@ -881,6 +881,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _weapon: {fileID: 1216162877}
+  _bulletPool: {fileID: 1678165558}
 --- !u!114 &1216162873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -961,9 +962,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bulletPrefab: {fileID: 6032552734835986631, guid: e5014904a833a6046932028d176844a1, type: 3}
-  _bulletPool: {fileID: 1678165558}
   _cooldown: 0.5
   _shootPoint: {fileID: 176520365671530134}
+  _friendlyLayers:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!114 &1216162878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1936,12 +1939,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cf23557eb5efd242816587b727b671d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 1216162870}
+  _playerController: {fileID: 1216162870}
   _enemyGenerator: {fileID: 2090007777}
   _timeController: {fileID: 1960331293}
   _gameUI: {fileID: 1121544177}
   _gameRestarter: {fileID: 263941219}
   _scoreManager: {fileID: 93146671}
+  _bulletPool: {fileID: 1678165558}
   _currentState: 0
 --- !u!114 &1960331293
 MonoBehaviour:

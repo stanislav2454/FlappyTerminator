@@ -4,13 +4,13 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [Header("System Dependencies")]
-    [SerializeField] private PlayerController _player;
+    [SerializeField] private PlayerController _playerController;
     [SerializeField] private EnemySpawner _enemyGenerator;
     [SerializeField] private TimeController _timeController;
     [SerializeField] private GameUI _gameUI;
     [SerializeField] private GameRestarter _gameRestarter;
     [SerializeField] private ScoreManager _scoreManager;
-
+    [SerializeField] private BulletPool _bulletPool;
     [SerializeField] private GameState _currentState = GameState.Menu;
 
     public event Action GameStarted;
@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         InitializeSystems();
+        ConfigureWeapons();
     }
 
     private void OnDisable()
@@ -46,8 +47,8 @@ public class GameManager : MonoBehaviour
 
     private void InitializeSystems()
     {
-        if (_player != null)
-            _player.OnDied += HandlePlayerDied;
+        if (_playerController != null)
+            _playerController.OnDied += HandlePlayerDied;
 
         if (_gameUI != null)
         {
@@ -56,10 +57,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void ConfigureWeapons()
+    {
+        if (_playerController != null && _bulletPool != null)
+            _playerController.SetBulletPool(_bulletPool);
+    }
+
     private void UnsubscribeFromSystems()
     {
-        if (_player != null)
-            _player.OnDied -= HandlePlayerDied;
+        if (_playerController != null)
+            _playerController.OnDied -= HandlePlayerDied;
 
         if (_gameUI != null)
         {

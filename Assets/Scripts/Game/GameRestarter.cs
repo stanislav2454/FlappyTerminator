@@ -44,7 +44,12 @@ public class GameRestarter : MonoBehaviour
         _bulletPool?.ResetPool();
 
         if (_playerController != null)
+        {
             _playerController.ResetPlayer();
+
+            if (_bulletPool != null)
+                _playerController.SetBulletPool(_bulletPool);
+        }
 
         _inputHandler?.EnableInput();
     }

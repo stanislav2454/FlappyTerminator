@@ -6,12 +6,15 @@ public class Bullet : MonoBehaviour, IInteractable
     [SerializeField] private float _speed = 8f;
     [SerializeField] private float _lifeTime = 3f;
     [SerializeField] private int _damage = 1;
+    [SerializeField] private LayerMask _friendlyLayers;
 
     private Vector2 _direction;
     private BulletOwner _owner;
     private Rigidbody2D _rigidbody;
     private SpriteRenderer _spriteRenderer;
-    private BulletPool _bulletPool;
+    private Coroutine _lifeTimeCoroutine;
+
+    public event System.Action<Bullet> ReturnedToPool;
 
     private void Awake()
     {
@@ -21,7 +24,12 @@ public class Bullet : MonoBehaviour, IInteractable
 
     private void OnDisable()
     {
-        CancelInvoke(nameof(ReturnToPool));
+        if (_lifeTimeCoroutine != null)
+        {
+            StopCoroutine(_lifeTimeCoroutine);
+            _lifeTimeCoroutine = null;
+        }
+
         _rigidbody.velocity = Vector2.zero;
     }
 
@@ -43,12 +51,20 @@ public class Bullet : MonoBehaviour, IInteractable
 
         _rigidbody.velocity = _direction * _speed;
 
-        CancelInvoke(nameof(ReturnToPool));
-        Invoke(nameof(ReturnToPool), _lifeTime);
+        if (_lifeTimeCoroutine != null)
+            StopCoroutine(_lifeTimeCoroutine);
+
+        _lifeTimeCoroutine = StartCoroutine(LifeTimeRoutine());
     }
 
-    public void SetPool(BulletPool pool) =>
-        _bulletPool = pool;
+    public void SetFriendlyLayers(LayerMask friendlyLayers) =>
+        _friendlyLayers = friendlyLayers;
+
+    private System.Collections.IEnumerator LifeTimeRoutine()
+    {
+        yield return new WaitForSeconds(_lifeTime);
+        ReturnToPool();
+    }
 
     private bool TryHandleCollision(Collider2D other)
     {
@@ -64,17 +80,9 @@ public class Bullet : MonoBehaviour, IInteractable
         return other.TryGetComponent(out Obstacle _);
     }
 
-    private bool IsFriendlyFire(Collider2D other)
-    {
-        return (_owner == BulletOwner.Player && other.TryGetComponent<PlayerController>(out _)) ||
-               (_owner == BulletOwner.Enemy && other.TryGetComponent<Enemy>(out _));
-    }
+    private bool IsFriendlyFire(Collider2D other) =>
+         (_friendlyLayers.value & (1 << other.gameObject.layer)) != 0;
 
-    private void ReturnToPool()
-    {
-        if (_bulletPool != null)
-            _bulletPool.ReturnBullet(this);
-        else
-            Destroy(gameObject);
-    }
+    private void ReturnToPool() =>
+        ReturnedToPool?.Invoke(this);
 }

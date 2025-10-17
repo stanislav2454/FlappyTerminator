@@ -20,13 +20,12 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
     private WaitForSeconds _shootDelayWait;
 
     public event System.Action<Enemy> EnemyDisabled;
+    public event System.Action<Enemy> EnemyDied;
 
     private void Awake()
     {
         _health = GetComponent<Health>();
-
-        if (_weapon == null)
-            Debug.LogError("Компонент \"EnemyWeapon\" не установлен в инспекторе!");
+        _weapon = GetComponent<EnemyWeapon>();
 
         _shootDelayWait = new WaitForSeconds(Delay);
     }
@@ -78,20 +77,11 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other != null && other.TryGetComponent<Obstacle>(out _))
-        {
             EnemyDisabled?.Invoke(this);
-            gameObject.SetActive(false);
-        }
     }
 
     public void SetGameManager(GameManager gameManager) =>
         _gameManager = gameManager;
-
-    public void SetBulletPool(BulletPool bulletPool)
-    {
-        if (_weapon != null)
-            _weapon.SetBulletPool(bulletPool);
-    }
 
     public void TakeDamage(int damage) =>
         _health?.TakeDamage(damage);
@@ -110,7 +100,6 @@ public class Enemy : MonoBehaviour, IInteractable, IDamageable
     private void OnDied()
     {
         _gameManager?.EnemyDestroyed(_scoreValue);
-        EnemyDisabled?.Invoke(this);
-        gameObject.SetActive(false);
+        EnemyDied?.Invoke(this);
     }
 }
